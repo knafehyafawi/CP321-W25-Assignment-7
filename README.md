@@ -10,6 +10,7 @@ As stated in the syllabus, late submissions are not accepted.
 - All the tasks must be completed programmatically.
 
 All charts and visualizations created should be easily comprehensible and must incorporate all necessary components, such as labels, legends, colour coding, and a title.
+
 Construct a concise dashboard to display the FIFA Soccer World Cup winners and runner-ups (https://en.wikipedia.org/wiki/List_of_FIFA_World_Cup_finals). The dashboard should utilize Choropleth map to visualize the data.
 - Step 1: Create a dataset for your dashboard. [5]
 - Step 2: Enable user interaction with the dashboard, allowing users to:
@@ -20,7 +21,7 @@ Construct a concise dashboard to display the FIFA Soccer World Cup winners and r
 
 _Render (https://render.com) is one option that you may use, and it offers a free plan for students. https://www.youtube.com/watch?v=H16dZMYmvqo_
 
-* West Germany and Germany should be considered the same country for the purpose of this assignment.
+Note: West Germany and Germany should be considered the same country for the purpose of this assignment.
 
 **Submission Details.**
 1. Create a folder named: FIRSTNAME_LASTNAME.
