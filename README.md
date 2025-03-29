@@ -1,5 +1,7 @@
 # CP 321 – Data Visualization Assignment 7
 
+Winter 2025
+
 Check and follow the submission instructions at the end of this document.
 As stated in the syllabus, late submissions are not accepted.
 
