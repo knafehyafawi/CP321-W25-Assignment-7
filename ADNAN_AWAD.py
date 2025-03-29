@@ -1,0 +1,130 @@
+"""
+CP321 - Data Visualisation
+Adnan Awad - 169028425
+Assignment 7
+"""
+
+# Published dashboard: https://your-deployed-dashboard-link.com (Password: your_password)
+
+import numpy as np
+import pandas as pd
+import dash
+from dash import dcc, html
+from dash.dependencies import Input, Output
+import plotly.express as px
+
+# Step 1: Create the dataset for FIFA World Cup finals
+data = {
+    'Year': [1930, 1934, 1938, 1950, 1954, 1958, 1962, 1966, 1970, 1974, 1978,
+             1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018, 2022],
+    'Winner': ['Uruguay', 'Italy', 'Italy', 'Uruguay', 'West Germany', 'Brazil',
+               'Brazil', 'England', 'Brazil', 'West Germany', 'Argentina',
+               'Italy', 'Argentina', 'West Germany', 'Brazil', 'France', 'Brazil',
+               'Italy', 'Spain', 'Germany', 'France', 'Argentina'],
+    'RunnerUp': ['Argentina', 'Czechoslovakia', 'Hungary', 'Brazil', 'Hungary',
+                 'Sweden', 'Czechoslovakia', 'West Germany', 'Italy', 'Netherlands',
+                 'Netherlands', 'West Germany', 'West Germany', 'Argentina', 'Italy',
+                 'Brazil', 'Germany', 'France', 'Netherlands', 'Argentina', 'Croatia', 'France']
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Replace 'West Germany' with 'Germany' for consistency
+df['Winner'] = df['Winner'].replace({'West Germany': 'Germany'})
+df['RunnerUp'] = df['RunnerUp'].replace({'West Germany': 'Germany'})
+
+# Step 2a: Compute the total wins per country from the Winner column
+wins = df['Winner'].value_counts().reset_index()
+wins.columns = ['Country', 'Wins']
+
+# Mapping for ISO codes required for the choropleth map (only include countries with valid ISO codes)
+iso_codes = {
+    "Germany": "DEU",
+    "Uruguay": "URY",
+    "Italy": "ITA",
+    "Brazil": "BRA",
+    "Argentina": "ARG",
+    "England": "GBR",
+    "France": "FRA",
+    "Spain": "ESP"
+}
+
+wins['iso_alpha'] = wins['Country'].apply(lambda x: iso_codes.get(x, None))
+
+# Create a choropleth map showing wins by country using Plotly Express
+fig_choropleth = px.choropleth(
+    wins,
+    locations="iso_alpha",
+    color="Wins",
+    hover_name="Country",
+    color_continuous_scale=px.colors.sequential.Plasma,
+    title="FIFA World Cup Wins by Country"
+)
+
+# Step 2: Build the Dash app layout
+app = dash.Dash(__name__)
+
+app.layout = html.Div([
+    html.H1("FIFA World Cup Dashboard"),
+
+    # Choropleth map section
+    html.Div([
+        html.H2("World Cup Wins Choropleth Map"),
+        dcc.Graph(id='choropleth', figure=fig_choropleth)
+    ]),
+
+    # List of winning countries
+    html.Div([
+        html.H2("Winning Countries"),
+        html.P("Countries that have ever won the World Cup:"),
+        html.Ul([html.Li(country) for country in wins['Country'].unique()])
+    ]),
+
+    # Country wins lookup (user selects a country)
+    html.Div([
+        html.H2("Country Wins Lookup"),
+        dcc.Dropdown(
+            id='country-dropdown',
+            options=[{'label': country, 'value': country} for country in wins['Country'].unique()],
+            placeholder="Select a country"
+        ),
+        html.Div(id='country-wins-output')
+    ]),
+
+    # Yearly finals lookup (user selects a year)
+    html.Div([
+        html.H2("Yearly Finals Lookup"),
+        dcc.Dropdown(
+            id='year-dropdown',
+            options=[{'label': year, 'value': year} for year in sorted(df['Year'].unique())],
+            placeholder="Select a year"
+        ),
+        html.Div(id='year-finals-output')
+    ])
+])
+
+# Callback for displaying the number of wins for a selected country
+@app.callback(
+    Output('country-wins-output', 'children'),
+    Input('country-dropdown', 'value')
+)
+def update_country_wins(selected_country):
+    if selected_country:
+        win_count = wins.loc[wins['Country'] == selected_country, 'Wins'].iloc[0]
+        return html.P(f"{selected_country} has won the World Cup {win_count} times.")
+    return html.P("Select a country to view its win count.")
+
+# Callback for displaying the winner and runner-up for a selected year
+@app.callback(
+    Output('year-finals-output', 'children'),
+    Input('year-dropdown', 'value')
+)
+def update_year_finals(selected_year):
+    if selected_year:
+        final_row = df[df['Year'] == selected_year].iloc[0]
+        return html.P(f"In {selected_year}, the winner was {final_row['Winner']} and the runner-up was {final_row['RunnerUp']}.")
+    return html.P("Select a year to view the finals details.")
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
