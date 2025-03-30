@@ -12,6 +12,7 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
+import gunicorn
 
 # Step 1: Create the dataset for FIFA World Cup finals
 data = {
