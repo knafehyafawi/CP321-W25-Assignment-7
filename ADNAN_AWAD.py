@@ -4,7 +4,8 @@ Adnan Awad - 169028425
 Assignment 7
 """
 
-# Published dashboard: https://your-deployed-dashboard-link.com (Password: your_password)
+# Published dashboard: https://cp321-a7-w25-adnan-awad-fifa-world-cup.onrender.co
+
 
 import numpy as np
 import pandas as pd
