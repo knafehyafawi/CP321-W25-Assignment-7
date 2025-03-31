@@ -4,8 +4,7 @@ Adnan Awad - 169028425
 Assignment 7
 """
 
-# Published dashboard: https://cp321-a7-w25-adnan-awad-fifa-world-cup.onrender.co
-
+# Published dashboard: https://cp321-a7-w25-adnan-awad-fifa-world-cup.onrender.com
 
 import numpy as np
 import pandas as pd
@@ -13,6 +12,7 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
+import dash_bootstrap_components as dbc
 import gunicorn
 
 # Step 1: Create the dataset for FIFA World Cup finals
@@ -24,9 +24,10 @@ data = {
                'Italy', 'Argentina', 'West Germany', 'Brazil', 'France', 'Brazil',
                'Italy', 'Spain', 'Germany', 'France', 'Argentina'],
     'RunnerUp': ['Argentina', 'Czechoslovakia', 'Hungary', 'Brazil', 'Hungary',
-                 'Sweden', 'Czechoslovakia', 'West Germany', 'Italy', 'Netherlands',
-                 'Netherlands', 'West Germany', 'West Germany', 'Argentina', 'Italy',
-                 'Brazil', 'Germany', 'France', 'Netherlands', 'Argentina', 'Croatia', 'France']
+                 'Sweden', 'Czechoslovakia', 'Germany', 'Italy', 'Netherlands',
+                 'Netherlands', 'Germany', 'Germany', 'Argentina', 'Italy',
+                 'Brazil', 'Germany', 'France', 'Netherlands', 'Argentina',
+                 'Croatia', 'France']
 }
 
 # Create DataFrame
@@ -64,50 +65,68 @@ fig_choropleth = px.choropleth(
     title="FIFA World Cup Wins by Country"
 )
 
-# Step 2: Build the Dash app layout
-app = dash.Dash(__name__)
+# Build the Dash app with Bootstrap
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
-app.layout = html.Div([
-    html.H1("FIFA World Cup Dashboard"),
-
-    # Choropleth map section
-    html.Div([
-        html.H2("World Cup Wins Choropleth Map"),
-        dcc.Graph(id='choropleth', figure=fig_choropleth)
-    ]),
-
-    # List of winning countries
-    html.Div([
-        html.H2("Winning Countries"),
-        html.P("Countries that have ever won the World Cup:"),
-        html.Ul([html.Li(country) for country in wins['Country'].unique()])
-    ]),
-
-    # Country wins lookup (user selects a country)
-    html.Div([
-        html.H2("Country Wins Lookup"),
-        dcc.Dropdown(
-            id='country-dropdown',
-            options=[{'label': country, 'value': country} for country in wins['Country'].unique()],
-            placeholder="Select a country"
+# Layout
+app.layout = dbc.Container(
+    fluid=True,
+    children=[
+        dbc.Row(
+            dbc.Col(
+                html.H1(
+                    "FIFA World Cup Dashboard",
+                    className="text-center my-4"
+                )
+            )
         ),
-        html.Div(id='country-wins-output')
-    ]),
 
-    # Yearly finals lookup (user selects a year)
-    html.Div([
-        html.H2("Yearly Finals Lookup"),
-        dcc.Dropdown(
-            id='year-dropdown',
-            options=[{'label': year, 'value': year} for year in sorted(df['Year'].unique())],
-            placeholder="Select a year"
+        dbc.Row(
+            dbc.Col([
+                html.H2("World Cup Wins Choropleth Map", className="mb-3"),
+                dcc.Graph(id='choropleth', figure=fig_choropleth, style={'height': '70vh'})
+            ], width=12),
+            className="mb-5"
         ),
-        html.Div(id='year-finals-output')
-    ])
-])
 
-# Callback for displaying the number of wins for a selected country
+        dbc.Row([
+            dbc.Col([
+                html.H2("Winning Countries", className="mb-3"),
+                html.P("Countries that have ever won the World Cup:"),
+                html.Ul([html.Li(country) for country in wins['Country'].unique()])
+            ], md=4, className="mb-4"),
+
+            dbc.Col([
+                html.H2("Country Wins Lookup", className="mb-3"),
+                dcc.Dropdown(
+                    id='country-dropdown',
+                    options=[
+                        {'label': country, 'value': country}
+                        for country in wins['Country'].unique()
+                    ],
+                    placeholder="Select a country"
+                ),
+                html.Div(id='country-wins-output', className="mt-3")
+            ], md=4, className="mb-4"),
+
+            dbc.Col([
+                html.H2("Yearly Finals Lookup", className="mb-3"),
+                dcc.Dropdown(
+                    id='year-dropdown',
+                    options=[
+                        {'label': year, 'value': year}
+                        for year in sorted(df['Year'].unique())
+                    ],
+                    placeholder="Select a year"
+                ),
+                html.Div(id='year-finals-output', className="mt-3")
+            ], md=4, className="mb-4"),
+        ]),
+    ]
+)
+
+# Callbacks
 @app.callback(
     Output('country-wins-output', 'children'),
     Input('country-dropdown', 'value')
@@ -118,7 +137,6 @@ def update_country_wins(selected_country):
         return html.P(f"{selected_country} has won the World Cup {win_count} times.")
     return html.P("Select a country to view its win count.")
 
-# Callback for displaying the winner and runner-up for a selected year
 @app.callback(
     Output('year-finals-output', 'children'),
     Input('year-dropdown', 'value')
@@ -126,7 +144,8 @@ def update_country_wins(selected_country):
 def update_year_finals(selected_year):
     if selected_year:
         final_row = df[df['Year'] == selected_year].iloc[0]
-        return html.P(f"In {selected_year}, the winner was {final_row['Winner']} and the runner-up was {final_row['RunnerUp']}.")
+        return html.P(f"In {selected_year}, the winner was {final_row['Winner']} "
+                      f"and the runner-up was {final_row['RunnerUp']}.")
     return html.P("Select a year to view the finals details.")
 
 if __name__ == '__main__':
