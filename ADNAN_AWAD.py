@@ -148,5 +148,21 @@ def update_year_finals(selected_year):
                       f"and the runner-up was {final_row['RunnerUp']}.")
     return html.P("Select a year to view the finals details.")
 
+# ------------------------------------------------------------------------
+
+import os
+
+def run_app():
+    # Check for an environment variable, e.g. DEPLOYED
+    deployed_flag = os.environ.get("DEPLOYED", "False").lower()
+    if deployed_flag in ["true", "1"]:
+        # Running in a deployed environment:
+        # Use app.run_server (this is what you prefer for deployed mode)
+        app.run_server(debug=False)
+    else:
+        # Running locally:
+        # Use app.run (or app.run_server, as they're usually equivalent in development)
+        app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    run_app()
