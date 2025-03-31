@@ -1,5 +1,5 @@
 CP 321 – Data Visualization Assignment 7
----
+=
 
 **Published dashboard:** https://cp321-a7-w25-adnan-awad-fifa-world-cup.onrender.com
 
@@ -7,6 +7,7 @@ Note: Please forgive the time it takes for the link to load. Render's free plan 
 
 The following is excerpted from the assignment posting in the course with slight alterations.
 
+---
 CP321 Data Visualization
 =
 Assignment 7
