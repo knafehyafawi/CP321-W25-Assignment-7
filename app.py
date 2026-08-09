@@ -8,16 +8,16 @@ from dash.dependencies import Input, Output
 # Create the dataset for FIFA World Cup finals
 data = {
     'Year': [1930, 1934, 1938, 1950, 1954, 1958, 1962, 1966, 1970, 1974, 1978,
-             1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018, 2022],
+             1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018, 2022, 2026],
     'Winner': ['Uruguay', 'Italy', 'Italy', 'Uruguay', 'West Germany', 'Brazil',
                'Brazil', 'England', 'Brazil', 'West Germany', 'Argentina',
                'Italy', 'Argentina', 'West Germany', 'Brazil', 'France', 'Brazil',
-               'Italy', 'Spain', 'Germany', 'France', 'Argentina'],
+               'Italy', 'Spain', 'Germany', 'France', 'Argentina', 'Spain'],
     'RunnerUp': ['Argentina', 'Czechoslovakia', 'Hungary', 'Brazil', 'Hungary',
                  'Sweden', 'Czechoslovakia', 'Germany', 'Italy', 'Netherlands',
                  'Netherlands', 'Germany', 'Germany', 'Argentina', 'Italy',
                  'Brazil', 'Germany', 'France', 'Netherlands', 'Argentina',
-                 'Croatia', 'France']
+                 'Croatia', 'France', 'Argentina']
 }
 
 # Create DataFrame
